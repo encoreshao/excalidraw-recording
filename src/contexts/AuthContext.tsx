@@ -18,6 +18,8 @@ interface GoogleUser {
 interface AuthContextType {
   user: GoogleUser | null;
   loading: boolean;
+  /** Whether Google OAuth is configured (client ID provided) */
+  googleConfigured: boolean;
   signInWithGoogle: () => void;
   logout: () => void;
 }
@@ -46,7 +48,11 @@ function saveUser(user: GoogleUser | null): void {
   }
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+/**
+ * Internal provider that uses useGoogleLogin.
+ * Must be rendered inside GoogleOAuthProvider.
+ */
+function GoogleAuthInner({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<GoogleUser | null>(loadUser);
   const [loading, setLoading] = useState(false);
 
@@ -94,7 +100,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         loading,
+        googleConfigured: true,
         signInWithGoogle: login,
+        logout: handleLogout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+/**
+ * AuthProvider that works in two modes:
+ * - googleConfigured=true  → uses GoogleAuthInner with real OAuth hooks
+ * - googleConfigured=false → provides a stub context, sign-in button is disabled
+ */
+export function AuthProvider({
+  children,
+  googleConfigured,
+}: {
+  children: ReactNode;
+  googleConfigured: boolean;
+}) {
+  if (googleConfigured) {
+    return <GoogleAuthInner>{children}</GoogleAuthInner>;
+  }
+  return <FallbackAuthInner>{children}</FallbackAuthInner>;
+}
+
+function FallbackAuthInner({ children }: { children: ReactNode }) {
+  const [user] = useState<GoogleUser | null>(loadUser);
+
+  const noop = useCallback(() => {
+    console.warn(
+      "Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID to your .env file.",
+    );
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    saveUser(null);
+    window.location.reload();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading: false,
+        googleConfigured: false,
+        signInWithGoogle: noop,
         logout: handleLogout,
       }}
     >

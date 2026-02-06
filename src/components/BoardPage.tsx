@@ -72,7 +72,7 @@ const ExcalidrawWithMenu = lazy(async () => {
 });
 
 export default function BoardPage() {
-  const { user, loading, signInWithGoogle, logout } = useAuth();
+  const { user, loading, googleConfigured, signInWithGoogle, logout } = useAuth();
   const excalidrawContainerRef = useRef<HTMLDivElement>(null);
   const { settings, updateSetting, resetSettings } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -198,11 +198,13 @@ export default function BoardPage() {
           /* Not signed in: Google sign-in button */
           <button
             onClick={() => signInWithGoogle()}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white
-                       px-3 py-1.5 text-sm text-gray-700 shadow-sm transition-all duration-200
-                       hover:bg-gray-50 hover:border-gray-300 hover:shadow
-                       active:scale-[0.97]"
-            title="Sign in with Google"
+            disabled={!googleConfigured}
+            className={`flex items-center gap-2 rounded-lg border border-gray-200 bg-white
+                       px-3 py-1.5 text-sm shadow-sm transition-all duration-200
+                       ${googleConfigured
+                         ? "text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:shadow active:scale-[0.97] cursor-pointer"
+                         : "text-gray-400 opacity-60 cursor-not-allowed"}`}
+            title={googleConfigured ? "Sign in with Google" : "Google sign-in not configured (set VITE_GOOGLE_CLIENT_ID in .env)"}
           >
             <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
               <path
@@ -227,7 +229,7 @@ export default function BoardPage() {
         )}
       </div>
     );
-  }, [user, loading, signInWithGoogle, logout]);
+  }, [user, loading, googleConfigured, signInWithGoogle, logout]);
 
   return (
     <div className="w-screen h-screen relative overflow-hidden">
