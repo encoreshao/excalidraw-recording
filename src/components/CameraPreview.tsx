@@ -70,7 +70,7 @@ export default function CameraPreview({ stream, visible }: CameraPreviewProps) {
     >
       <div className="relative group">
         {/* Glow ring */}
-        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-accent to-pink-600 opacity-50 blur-sm group-hover:opacity-70 transition-opacity" />
+        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 opacity-50 blur-sm group-hover:opacity-70 transition-opacity" />
 
         {/* Video container */}
         <div className="relative w-36 h-36 rounded-full overflow-hidden border-[3px] border-white shadow-2xl">

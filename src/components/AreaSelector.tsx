@@ -1,6 +1,21 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { SelectionArea } from "../types";
 
+interface AspectPreset {
+  label: string;
+  sublabel: string;
+  ratio: [number, number] | null; // null = custom (drag)
+}
+
+const ASPECT_PRESETS: AspectPreset[] = [
+  { label: "16:9", sublabel: "YouTube", ratio: [16, 9] },
+  { label: "4:3", sublabel: "Classic", ratio: [4, 3] },
+  { label: "3:4", sublabel: "RedNote", ratio: [3, 4] },
+  { label: "9:16", sublabel: "TikTok", ratio: [9, 16] },
+  { label: "1:1", sublabel: "Square", ratio: [1, 1] },
+  { label: "Custom", sublabel: "Your size", ratio: null },
+];
+
 interface AreaSelectorProps {
   active: boolean;
   selectionArea: SelectionArea | null;
@@ -28,8 +43,65 @@ export default function AreaSelector({
 }: AreaSelectorProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragMode, setDragMode] = useState<DragMode>("create");
+  const [showPresets, setShowPresets] = useState(true);
   const dragStart = useRef({ x: 0, y: 0 });
   const dragAreaStart = useRef<SelectionArea | null>(null);
+
+  // Reset preset panel when area selector becomes active
+  useEffect(() => {
+    if (active) {
+      setShowPresets(true);
+    }
+  }, [active]);
+
+  // Calculate a centered area for a given aspect ratio
+  const applyPreset = useCallback(
+    (ratio: [number, number]) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const cw = container.offsetWidth;
+      const ch = container.offsetHeight;
+      const padding = 80; // margin from edges
+      const availW = cw - padding * 2;
+      const availH = ch - padding * 2;
+      const [rw, rh] = ratio;
+
+      let width: number;
+      let height: number;
+      if (availW / availH > rw / rh) {
+        // height constrained
+        height = availH;
+        width = (height * rw) / rh;
+      } else {
+        // width constrained
+        width = availW;
+        height = (width * rh) / rw;
+      }
+
+      // Center
+      const x = (cw - width) / 2;
+      const y = (ch - height) / 2;
+
+      onSelectionChange({ x, y, width, height });
+      setShowPresets(false);
+    },
+    [containerRef, onSelectionChange],
+  );
+
+  const handlePresetClick = useCallback(
+    (preset: AspectPreset, e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (preset.ratio) {
+        applyPreset(preset.ratio);
+      } else {
+        // Custom: just dismiss presets and let user drag
+        setShowPresets(false);
+      }
+    },
+    [applyPreset],
+  );
 
   const getRelativePosition = useCallback(
     (e: MouseEvent | React.MouseEvent) => {
@@ -47,7 +119,8 @@ export default function AreaSelector({
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
-      // Don't start a new selection if we already have one
+      // Don't start a new selection if presets are visible or we already have one
+      if (showPresets) return;
       if (selectionArea && selectionArea.width > 10 && selectionArea.height > 10)
         return;
       e.preventDefault();
@@ -59,7 +132,7 @@ export default function AreaSelector({
       setDragMode("create");
       onSelectionChange({ x: pos.x, y: pos.y, width: 0, height: 0 });
     },
-    [getRelativePosition, selectionArea, onSelectionChange],
+    [getRelativePosition, selectionArea, onSelectionChange, showPresets],
   );
 
   const handleResizeStart = useCallback(
@@ -335,12 +408,57 @@ export default function AreaSelector({
         </>
       )}
 
-      {/* Instructions */}
-      {!hasSelection && !isDragging && (
+      {/* Aspect ratio presets */}
+      {!hasSelection && !isDragging && showPresets && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="pointer-events-auto rounded-2xl border border-gray-200 bg-white/95 shadow-2xl shadow-black/10 backdrop-blur-xl px-8 py-6 max-w-lg w-full">
+            <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase mb-4">
+              Aspect Ratio
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              {ASPECT_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  onClick={(e) => handlePresetClick(preset, e)}
+                  className="group flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-gray-200 bg-white py-4 px-3
+                             transition-all duration-150
+                             hover:border-gray-900 hover:bg-gray-900 hover:text-white hover:shadow-lg
+                             active:scale-[0.97]"
+                >
+                  <span className="text-xl font-bold tracking-tight group-hover:text-white text-gray-800">
+                    {preset.label}
+                  </span>
+                  <span className="text-xs text-gray-400 group-hover:text-gray-300">
+                    {preset.sublabel}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-xs text-gray-400">
+                Pick a ratio or choose Custom to draw freely
+              </p>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onCancel();
+                }}
+                className="text-xs text-gray-500 hover:text-gray-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom drag instructions */}
+      {!hasSelection && !isDragging && !showPresets && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="rounded-2xl border border-gray-200 bg-white/95 shadow-2xl shadow-black/10 backdrop-blur-xl px-8 py-6 text-center">
             <p className="text-gray-900 font-semibold text-lg mb-1">
-              Select Recording Area
+              Draw Your Area
             </p>
             <p className="text-gray-500 text-sm">
               Click and drag to select the area you want to record

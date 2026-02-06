@@ -1,10 +1,14 @@
-import { useState, useRef, useCallback, lazy, Suspense } from "react";
+import { useState, useRef, useCallback, useEffect, lazy, Suspense } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useMediaDevices } from "../hooks/useMediaDevices";
+import { useSpeechToText } from "../hooks/useSpeechToText";
+import { useSettings } from "../hooks/useSettings";
 import { useRecorder } from "../hooks/useRecorder";
 import AreaSelector from "./AreaSelector";
 import CameraPreview from "./CameraPreview";
+import CaptionOverlay from "./CaptionOverlay";
 import RecordingControls from "./RecordingControls";
+import SettingsDialog from "./SettingsDialog";
 import ExportDialog from "./ExportDialog";
 import type { SelectionArea } from "../types";
 
@@ -36,7 +40,7 @@ const ExcalidrawWithMenu = lazy(async () => {
         <MainMenu.DefaultItems.Help />
         <MainMenu.DefaultItems.ClearCanvas />
         <MainMenu.Separator />
-        <MainMenu.Group title="Links">
+        <MainMenu.Group title="My Links">
           <MainMenu.ItemLink
             href="https://github.com/encoreshao"
             icon={
@@ -70,6 +74,8 @@ const ExcalidrawWithMenu = lazy(async () => {
 export default function BoardPage() {
   const { user, loading, signInWithGoogle, logout } = useAuth();
   const excalidrawContainerRef = useRef<HTMLDivElement>(null);
+  const { settings, updateSetting, resetSettings } = useSettings();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Area selection state
   const [isSelectingArea, setIsSelectingArea] = useState(false);
@@ -82,6 +88,29 @@ export default function BoardPage() {
   // Media devices
   const media = useMediaDevices();
 
+  // Speech-to-text captions
+  const speech = useSpeechToText("en-US", settings.captionClearDelay);
+  const [captionPosition, setCaptionPosition] = useState({ x: 0, y: 0 });
+  const captionRef = useRef<{
+    text: string;
+    position: { x: number; y: number };
+    enabled: boolean;
+  } | null>(null);
+
+  // Keep captionRef in sync with latest values
+  captionRef.current = {
+    text: speech.transcript,
+    position: captionPosition,
+    enabled: speech.isListening,
+  };
+
+  // Settings ref for recorder (avoids re-creating callbacks on every settings change)
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  // Mouse position ref for cursor effect
+  const mousePositionRef = useRef({ x: 0, y: 0 });
+
   // Recorder
   const recorder = useRecorder({
     excalidrawContainerRef,
@@ -89,7 +118,20 @@ export default function BoardPage() {
     cameraStream: media.cameraStream,
     micStream: media.micStream,
     cameraEnabled: media.cameraEnabled,
+    captionRef,
+    settingsRef,
+    mousePositionRef,
   });
+
+  // Track mouse position for cursor effect in recordings
+  useEffect(() => {
+    if (!recorder.isRecording || settings.cursorEffect === "none") return;
+    const handler = (e: MouseEvent) => {
+      mousePositionRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("mousemove", handler);
+    return () => window.removeEventListener("mousemove", handler);
+  }, [recorder.isRecording, settings.cursorEffect]);
 
   // Handlers
   const handleSelectArea = useCallback(() => {
@@ -137,7 +179,7 @@ export default function BoardPage() {
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-violet-100 border-2 border-white shadow-sm flex items-center justify-center text-violet-600 text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-white shadow-sm flex items-center justify-center text-green-700 text-xs font-bold">
                 {(user.name || user.email || "U").charAt(0).toUpperCase()}
               </div>
             )}
@@ -198,7 +240,7 @@ export default function BoardPage() {
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-white">
               <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
                 <p className="text-gray-400 text-sm">Loading Excalidraw...</p>
               </div>
             </div>
@@ -260,6 +302,17 @@ export default function BoardPage() {
         visible={media.cameraEnabled && !isSelectingArea}
       />
 
+      {/* Live captions overlay */}
+      <CaptionOverlay
+        text={speech.transcript}
+        visible={speech.isListening && !isSelectingArea}
+        onPositionChange={setCaptionPosition}
+        bgColor={settings.captionBgColor}
+        textColor={settings.captionTextColor}
+        cornerRadius={settings.captionCornerRadius}
+        fontSize={settings.captionFontSize}
+      />
+
       {/* Recording controls */}
       {!isSelectingArea && (
         <RecordingControls
@@ -270,17 +323,30 @@ export default function BoardPage() {
           isSelectingArea={isSelectingArea}
           cameraEnabled={media.cameraEnabled}
           micEnabled={media.micEnabled}
+          captionsEnabled={speech.isListening}
+          captionsSupported={speech.isSupported}
           cameraError={media.cameraError}
           micError={media.micError}
           onToggleCamera={media.toggleCamera}
           onToggleMic={media.toggleMic}
+          onToggleCaptions={speech.toggle}
           onSelectArea={handleSelectArea}
           onStartRecording={recorder.startRecording}
           onStopRecording={recorder.stopRecording}
           onPauseRecording={recorder.pauseRecording}
           onResumeRecording={recorder.resumeRecording}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
       )}
+
+      {/* Settings dialog */}
+      <SettingsDialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        onUpdate={updateSetting}
+        onReset={resetSettings}
+      />
 
       {/* Export dialog */}
       {recorder.recordedBlob && (
