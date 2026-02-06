@@ -13,7 +13,7 @@ const ASPECT_PRESETS: AspectPreset[] = [
   { label: "3:4", sublabel: "RedNote", ratio: [3, 4] },
   { label: "9:16", sublabel: "TikTok", ratio: [9, 16] },
   { label: "1:1", sublabel: "Square", ratio: [1, 1] },
-  { label: "Custom", sublabel: "Your size", ratio: null },
+  { label: "Free", sublabel: "Custom", ratio: null },
 ];
 
 interface AreaSelectorProps {
@@ -62,7 +62,7 @@ export default function AreaSelector({
 
       const cw = container.offsetWidth;
       const ch = container.offsetHeight;
-      const padding = 80; // margin from edges
+      const padding = 80;
       const availW = cw - padding * 2;
       const availH = ch - padding * 2;
       const [rw, rh] = ratio;
@@ -70,16 +70,13 @@ export default function AreaSelector({
       let width: number;
       let height: number;
       if (availW / availH > rw / rh) {
-        // height constrained
         height = availH;
         width = (height * rw) / rh;
       } else {
-        // width constrained
         width = availW;
         height = (width * rh) / rw;
       }
 
-      // Center
       const x = (cw - width) / 2;
       const y = (ch - height) / 2;
 
@@ -96,7 +93,6 @@ export default function AreaSelector({
       if (preset.ratio) {
         applyPreset(preset.ratio);
       } else {
-        // Custom: just dismiss presets and let user drag
         setShowPresets(false);
       }
     },
@@ -119,7 +115,6 @@ export default function AreaSelector({
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
-      // Don't start a new selection if presets are visible or we already have one
       if (showPresets) return;
       if (selectionArea && selectionArea.width > 10 && selectionArea.height > 10)
         return;
@@ -285,7 +280,7 @@ export default function AreaSelector({
       style={{ cursor: hasSelection && !isDragging ? "default" : "crosshair" }}
       onMouseDown={handleMouseDown}
     >
-      {/* Dark overlay with cutout - pointer-events-none so clicks pass through to buttons */}
+      {/* Dark overlay with cutout */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
         <defs>
           <mask id="selection-mask">
@@ -305,7 +300,7 @@ export default function AreaSelector({
         <rect
           width="100%"
           height="100%"
-          fill="rgba(0, 0, 0, 0.5)"
+          fill="rgba(0, 0, 0, 0.45)"
           mask="url(#selection-mask)"
         />
       </svg>
@@ -315,7 +310,7 @@ export default function AreaSelector({
         <>
           {/* Selection border + move area */}
           <div
-            className="absolute border-2 border-accent rounded-[4px]"
+            className="absolute border-2 border-green-500 rounded-[4px]"
             style={{
               left: selectionArea.x,
               top: selectionArea.y,
@@ -328,7 +323,7 @@ export default function AreaSelector({
               onMouseDown={handleMoveStart}
             />
             {/* Dimensions label */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-accent text-white text-xs font-mono whitespace-nowrap">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-gray-900/80 backdrop-blur-sm text-white text-[11px] font-mono whitespace-nowrap">
               {Math.round(selectionArea.width)} x{" "}
               {Math.round(selectionArea.height)}
             </div>
@@ -341,16 +336,16 @@ export default function AreaSelector({
             return (
               <div
                 key={corner}
-                className="absolute w-4 h-4 bg-white border-2 border-accent rounded-full shadow-md z-10"
+                className="absolute w-3.5 h-3.5 bg-white border-2 border-green-500 rounded-full shadow-md z-10"
                 style={{
                   left:
                     (isLeft
                       ? selectionArea.x
-                      : selectionArea.x + selectionArea.width) - 8,
+                      : selectionArea.x + selectionArea.width) - 7,
                   top:
                     (isTop
                       ? selectionArea.y
-                      : selectionArea.y + selectionArea.height) - 8,
+                      : selectionArea.y + selectionArea.height) - 7,
                   cursor: `${corner}-resize`,
                 }}
                 onMouseDown={(e) =>
@@ -360,7 +355,7 @@ export default function AreaSelector({
             );
           })}
 
-          {/* Action buttons - positioned relative to selection bottom */}
+          {/* Action buttons */}
           {!isDragging && (
             <div
               className="absolute z-20 flex gap-2"
@@ -376,22 +371,13 @@ export default function AreaSelector({
                   e.stopPropagation();
                   onConfirm();
                 }}
-                className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-accent/30 hover:bg-accent-hover active:scale-[0.97] transition-all"
+                className="flex items-center gap-1.5 rounded-xl bg-green-600 px-4 py-2 text-[13px] font-semibold text-white
+                           shadow-lg shadow-green-600/25 hover:bg-green-500 active:scale-[0.97] transition-all duration-150 cursor-pointer"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m4.5 12.75 6 6 9-13.5"
-                  />
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                 </svg>
-                Confirm Area
+                Confirm
               </button>
               <button
                 onClick={(e) => {
@@ -399,7 +385,8 @@ export default function AreaSelector({
                   e.stopPropagation();
                   onCancel();
                 }}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 active:scale-[0.97] transition-all"
+                className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm px-4 py-2 text-[13px] font-medium text-gray-600
+                           shadow-sm hover:bg-white hover:text-gray-900 active:scale-[0.97] transition-all duration-150 cursor-pointer"
               >
                 Cancel
               </button>
@@ -411,32 +398,50 @@ export default function AreaSelector({
       {/* Aspect ratio presets */}
       {!hasSelection && !isDragging && showPresets && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="pointer-events-auto rounded-2xl border border-gray-200 bg-white/95 shadow-2xl shadow-black/10 backdrop-blur-xl px-8 py-6 max-w-lg w-full">
-            <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase mb-4">
-              Aspect Ratio
-            </p>
-            <div className="grid grid-cols-3 gap-3">
+          <div className="pointer-events-auto bg-white rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100 px-7 py-6 max-w-md w-full dialog-enter">
+            <div className="flex items-center gap-2 mb-5">
+              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5" />
+              </svg>
+              <h3 className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">
+                Choose Aspect Ratio
+              </h3>
+              <div className="flex-1 h-px bg-gray-100" />
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
               {ASPECT_PRESETS.map((preset) => (
                 <button
                   key={preset.label}
                   onClick={(e) => handlePresetClick(preset, e)}
-                  className="group flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-gray-200 bg-white py-4 px-3
-                             transition-all duration-150
-                             hover:border-gray-900 hover:bg-gray-900 hover:text-white hover:shadow-lg
+                  className="group relative flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-150 bg-gray-50/50 py-4 px-3
+                             transition-all duration-150 ease-out cursor-pointer
+                             hover:border-green-300 hover:bg-green-50/50 hover:shadow-sm
                              active:scale-[0.97]"
                 >
-                  <span className="text-xl font-bold tracking-tight group-hover:text-white text-gray-800">
-                    {preset.label}
-                  </span>
-                  <span className="text-xs text-gray-400 group-hover:text-gray-300">
-                    {preset.sublabel}
-                  </span>
+                  {/* Visual ratio preview */}
+                  {preset.ratio ? (
+                    <RatioPreview ratio={preset.ratio} />
+                  ) : (
+                    <div className="w-7 h-7 rounded border-2 border-dashed border-gray-300 group-hover:border-green-400 transition-colors flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5 text-gray-400 group-hover:text-green-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="text-center">
+                    <span className="text-[13px] font-semibold text-gray-700 group-hover:text-green-700 transition-colors block leading-tight">
+                      {preset.label}
+                    </span>
+                    <span className="text-[10px] text-gray-400 group-hover:text-green-500 transition-colors">
+                      {preset.sublabel}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-xs text-gray-400">
-                Pick a ratio or choose Custom to draw freely
+              <p className="text-[11px] text-gray-400">
+                Pick a ratio or draw freely
               </p>
               <button
                 onClick={(e) => {
@@ -444,7 +449,7 @@ export default function AreaSelector({
                   e.stopPropagation();
                   onCancel();
                 }}
-                className="text-xs text-gray-500 hover:text-gray-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100"
+                className="text-[12px] text-gray-400 hover:text-gray-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100 cursor-pointer"
               >
                 Cancel
               </button>
@@ -456,16 +461,38 @@ export default function AreaSelector({
       {/* Custom drag instructions */}
       {!hasSelection && !isDragging && !showPresets && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="rounded-2xl border border-gray-200 bg-white/95 shadow-2xl shadow-black/10 backdrop-blur-xl px-8 py-6 text-center">
-            <p className="text-gray-900 font-semibold text-lg mb-1">
-              Draw Your Area
-            </p>
-            <p className="text-gray-500 text-sm">
-              Click and drag to select the area you want to record
-            </p>
+          <div className="bg-white rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100 px-8 py-6 text-center dialog-enter">
+            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mx-auto mb-3">
+              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+              </svg>
+            </div>
+            <p className="text-gray-900 font-semibold text-[15px] mb-1">Draw Your Area</p>
+            <p className="text-gray-400 text-[13px]">Click and drag to select the recording region</p>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+/* ── Visual Ratio Preview Thumbnail ── */
+function RatioPreview({ ratio }: { ratio: [number, number] }) {
+  const [w, h] = ratio;
+  const maxDim = 28;
+  let displayW: number;
+  let displayH: number;
+  if (w > h) {
+    displayW = maxDim;
+    displayH = Math.round((maxDim * h) / w);
+  } else {
+    displayH = maxDim;
+    displayW = Math.round((maxDim * w) / h);
+  }
+  return (
+    <div
+      className="rounded border-2 border-gray-300 group-hover:border-green-400 bg-white group-hover:bg-green-50 transition-colors"
+      style={{ width: displayW, height: displayH, minWidth: 12, minHeight: 12 }}
+    />
   );
 }

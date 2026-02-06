@@ -106,6 +106,23 @@ npm run build
 npm run preview
 ```
 
+### Docker
+
+Build and run with Docker — no Node.js required on the host:
+
+```bash
+# Build the image (without Google sign-in)
+docker build -t excalidraw-recording .
+
+# Or build with Google sign-in enabled
+docker build --build-arg VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com -t excalidraw-recording .
+
+# Run the container
+docker run -p 8080:80 excalidraw-recording
+```
+
+Open [http://localhost:8080](http://localhost:8080)
+
 ## Usage
 
 1. **Draw** — Use the Excalidraw toolbar to sketch diagrams, write text, and create drawings

@@ -158,8 +158,8 @@ export default function BoardPage() {
 
   const handleNewRecording = useCallback(() => {
     recorder.clearRecording();
-    setConfirmedSelection(null);
-    setSelectionArea(null);
+    // Keep confirmedSelection and selectionArea so the user
+    // can immediately record again with the same area size
   }, [recorder]);
 
   // Rendered inside Excalidraw's top-right UI slot
@@ -304,10 +304,10 @@ export default function BoardPage() {
         visible={media.cameraEnabled && !isSelectingArea}
       />
 
-      {/* Live captions overlay */}
+      {/* Live captions overlay — hidden when export dialog is showing */}
       <CaptionOverlay
         text={speech.transcript}
-        visible={speech.isListening && !isSelectingArea}
+        visible={speech.isListening && !isSelectingArea && !recorder.recordedBlob}
         onPositionChange={setCaptionPosition}
         bgColor={settings.captionBgColor}
         textColor={settings.captionTextColor}

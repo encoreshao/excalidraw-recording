@@ -6,12 +6,38 @@ interface CameraPreviewProps {
 }
 
 export default function CameraPreview({ stream, visible }: CameraPreviewProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [initialized, setInitialized] = useState(false);
   const isDragging = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
+
+  // Keep a stable ref to the current stream so the callback ref can read it
+  const streamRef = useRef(stream);
+  streamRef.current = stream;
+
+  // Callback ref: attaches srcObject every time the <video> element mounts
+  const videoCallbackRef = useCallback((node: HTMLVideoElement | null) => {
+    if (node && streamRef.current) {
+      node.srcObject = streamRef.current;
+    }
+  }, []);
+
+  // Also re-attach when stream itself changes while the element is already mounted
+  const videoNodeRef = useRef<HTMLVideoElement | null>(null);
+  const combinedVideoRef = useCallback(
+    (node: HTMLVideoElement | null) => {
+      videoNodeRef.current = node;
+      videoCallbackRef(node);
+    },
+    [videoCallbackRef],
+  );
+
+  useEffect(() => {
+    if (videoNodeRef.current && stream) {
+      videoNodeRef.current.srcObject = stream;
+    }
+  }, [stream]);
 
   // Set initial position to bottom-right
   useEffect(() => {
@@ -23,12 +49,6 @@ export default function CameraPreview({ stream, visible }: CameraPreviewProps) {
       setInitialized(true);
     }
   }, [visible, initialized]);
-
-  useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,13 +89,13 @@ export default function CameraPreview({ stream, visible }: CameraPreviewProps) {
       onMouseDown={handleMouseDown}
     >
       <div className="relative group">
-        {/* Glow ring */}
-        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 opacity-50 blur-sm group-hover:opacity-70 transition-opacity" />
+        {/* Soft glow ring */}
+        <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-green-400/40 to-emerald-500/30 blur-md opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 
         {/* Video container */}
-        <div className="relative w-36 h-36 rounded-full overflow-hidden border-[3px] border-white shadow-2xl">
+        <div className="relative w-36 h-36 rounded-full overflow-hidden border-[3px] border-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
           <video
-            ref={videoRef}
+            ref={combinedVideoRef}
             autoPlay
             playsInline
             muted
@@ -84,7 +104,7 @@ export default function CameraPreview({ stream, visible }: CameraPreviewProps) {
         </div>
 
         {/* Drag hint */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-white border border-gray-200 text-[10px] text-gray-500 font-mono shadow-sm">
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-gray-100 text-[9px] text-gray-400 font-mono shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           CAMERA
         </div>
       </div>
