@@ -52,38 +52,41 @@ export default function SettingsDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/25 backdrop-blur-sm backdrop-enter"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/20 backdrop-blur-sm backdrop-enter"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100 w-full max-w-[580px] max-h-[85vh] overflow-hidden flex flex-col dialog-enter">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
-              <svg className="w-[18px] h-[18px] text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      <div className="bg-white rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.14),0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100/80 w-full max-w-[580px] max-h-[85vh] overflow-hidden flex flex-col dialog-enter">
+        {/* Header with gradient accent */}
+        <div className="relative">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-40" />
+          <div className="flex items-center justify-between px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center shadow-sm shadow-green-100">
+                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-[15px] font-semibold text-gray-900">Settings</h2>
+                <p className="text-[11px] text-gray-400 mt-0.5">Auto-saved to your browser</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-150 cursor-pointer"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
-            </div>
-            <div>
-              <h2 className="text-[15px] font-semibold text-gray-900">Settings</h2>
-              <p className="text-[11px] text-gray-400 mt-0.5">Auto-saved to your browser</p>
-            </div>
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-150 cursor-pointer"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="overflow-y-auto flex-1 px-6 py-5 space-y-7 custom-scrollbar">
-          {/* ── Caption Settings ── */}
-          <Section
+        <div className="overflow-y-auto flex-1 px-5 pb-5 space-y-4 custom-scrollbar">
+          {/* ── Captions Card ── */}
+          <SectionCard
             title="Captions"
             icon={
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -91,6 +94,21 @@ export default function SettingsDialog({
               </svg>
             }
           >
+            {/* Live preview */}
+            <div className="mb-4 flex justify-center">
+              <div
+                className="px-4 py-2 text-[13px] font-medium text-center transition-all duration-200"
+                style={{
+                  background: settings.captionBgColor,
+                  color: settings.captionTextColor,
+                  borderRadius: `${settings.captionCornerRadius}px`,
+                  fontSize: settings.captionFontSize === "small" ? 12 : settings.captionFontSize === "large" ? 16 : 14,
+                }}
+              >
+                Preview caption text
+              </div>
+            </div>
+
             <SettingRow label="Background">
               <ColorSwatches
                 colors={CAPTION_BG_PRESETS}
@@ -98,7 +116,6 @@ export default function SettingsDialog({
                 onChange={(v) => onUpdate("captionBgColor", v)}
               />
             </SettingRow>
-
             <SettingRow label="Text Color">
               <ColorSwatches
                 colors={CAPTION_TEXT_PRESETS}
@@ -106,44 +123,23 @@ export default function SettingsDialog({
                 onChange={(v) => onUpdate("captionTextColor", v)}
               />
             </SettingRow>
-
             <SettingRow label="Corner Radius">
-              <SliderRow
-                min={0}
-                max={24}
-                step={2}
-                value={settings.captionCornerRadius}
-                onChange={(v) => onUpdate("captionCornerRadius", v)}
-                suffix="px"
-              />
+              <SliderRow min={0} max={24} step={2} value={settings.captionCornerRadius} onChange={(v) => onUpdate("captionCornerRadius", v)} suffix="px" />
             </SettingRow>
-
             <SettingRow label="Font Size">
               <SegmentedControl
-                options={[
-                  { label: "S", value: "small" },
-                  { label: "M", value: "medium" },
-                  { label: "L", value: "large" },
-                ]}
+                options={[{ label: "S", value: "small" }, { label: "M", value: "medium" }, { label: "L", value: "large" }]}
                 value={settings.captionFontSize}
                 onChange={(v) => onUpdate("captionFontSize", v as AppSettings["captionFontSize"])}
               />
             </SettingRow>
-
             <SettingRow label="Auto-Clear">
-              <SliderRow
-                min={1}
-                max={10}
-                step={1}
-                value={settings.captionClearDelay}
-                onChange={(v) => onUpdate("captionClearDelay", v)}
-                suffix="s"
-              />
+              <SliderRow min={1} max={10} step={1} value={settings.captionClearDelay} onChange={(v) => onUpdate("captionClearDelay", v)} suffix="s" />
             </SettingRow>
-          </Section>
+          </SectionCard>
 
-          {/* ── Camera Settings ── */}
-          <Section
+          {/* ── Camera Card ── */}
+          <SectionCard
             title="Camera"
             icon={
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -152,74 +148,47 @@ export default function SettingsDialog({
             }
           >
             <SettingRow label="Show in Recording">
-              <Toggle
-                checked={settings.showCameraInRecording}
-                onChange={(v) => onUpdate("showCameraInRecording", v)}
-              />
+              <Toggle checked={settings.showCameraInRecording} onChange={(v) => onUpdate("showCameraInRecording", v)} />
             </SettingRow>
-
             <SettingRow label="Bubble Size">
               <SegmentedControl
-                options={[
-                  { label: "Small", value: "small" },
-                  { label: "Medium", value: "medium" },
-                  { label: "Large", value: "large" },
-                ]}
+                options={[{ label: "Small", value: "small" }, { label: "Medium", value: "medium" }, { label: "Large", value: "large" }]}
                 value={settings.cameraBubbleSize}
                 onChange={(v) => onUpdate("cameraBubbleSize", v as AppSettings["cameraBubbleSize"])}
               />
             </SettingRow>
-          </Section>
+          </SectionCard>
 
-          {/* ── Recording Settings ── */}
-          <Section
+          {/* ── Recording Card ── */}
+          <SectionCard
             title="Recording"
             icon={
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0 1 18 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0 1 18 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 0 1 6 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M19.125 12h1.5m0 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5" />
               </svg>
             }
           >
             <SettingRow label="Canvas Padding">
-              <SliderRow
-                min={0}
-                max={60}
-                step={5}
-                value={settings.canvasPadding}
-                onChange={(v) => onUpdate("canvasPadding", v)}
-                suffix="px"
-              />
+              <SliderRow min={0} max={60} step={5} value={settings.canvasPadding} onChange={(v) => onUpdate("canvasPadding", v)} suffix="px" />
             </SettingRow>
-
             <SettingRow label="Frame Rate">
               <SegmentedControl
-                options={[
-                  { label: "15", value: "15" },
-                  { label: "24", value: "24" },
-                  { label: "30", value: "30" },
-                  { label: "60", value: "60" },
-                ]}
+                options={[{ label: "15fps", value: "15" }, { label: "24fps", value: "24" }, { label: "30fps", value: "30" }, { label: "60fps", value: "60" }]}
                 value={String(settings.recordingFps)}
                 onChange={(v) => onUpdate("recordingFps", Number(v) as AppSettings["recordingFps"])}
               />
             </SettingRow>
-
-            <SettingRow label="Video Quality">
+            <SettingRow label="Quality">
               <SegmentedControl
-                options={[
-                  { label: "Low", value: "2" },
-                  { label: "Med", value: "5" },
-                  { label: "High", value: "8" },
-                  { label: "Max", value: "12" },
-                ]}
+                options={[{ label: "Low", value: "2" }, { label: "Med", value: "5" }, { label: "High", value: "8" }, { label: "Max", value: "12" }]}
                 value={String(settings.videoBitrate)}
                 onChange={(v) => onUpdate("videoBitrate", Number(v))}
               />
             </SettingRow>
-          </Section>
+          </SectionCard>
 
-          {/* ── Cursor Effect ── */}
-          <Section
+          {/* ── Cursor Card ── */}
+          <SectionCard
             title="Mouse Cursor"
             icon={
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -229,16 +198,11 @@ export default function SettingsDialog({
           >
             <SettingRow label="Effect">
               <SegmentedControl
-                options={[
-                  { label: "None", value: "none" },
-                  { label: "Highlight", value: "highlight" },
-                  { label: "Spotlight", value: "spotlight" },
-                ]}
+                options={[{ label: "None", value: "none" }, { label: "Highlight", value: "highlight" }, { label: "Spotlight", value: "spotlight" }]}
                 value={settings.cursorEffect}
                 onChange={(v) => onUpdate("cursorEffect", v as AppSettings["cursorEffect"])}
               />
             </SettingRow>
-
             {settings.cursorEffect !== "none" && (
               <SettingRow label="Color">
                 <ColorSwatches
@@ -248,20 +212,20 @@ export default function SettingsDialog({
                 />
               </SettingRow>
             )}
-          </Section>
+          </SectionCard>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
+        <div className="px-6 py-3.5 border-t border-gray-100 bg-gradient-to-b from-gray-50/40 to-gray-50/80 flex items-center justify-between">
           <button
             onClick={onReset}
-            className="text-[13px] text-gray-400 hover:text-gray-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100 cursor-pointer"
+            className="text-[12px] text-gray-400 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
           >
             Reset to Defaults
           </button>
           <button
             onClick={onClose}
-            className="text-[13px] font-medium text-white bg-gray-900 hover:bg-gray-800 px-5 py-2 rounded-xl transition-all duration-150 hover:shadow-sm cursor-pointer"
+            className="text-[13px] font-medium text-white bg-gradient-to-b from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 px-6 py-2 rounded-xl transition-all duration-150 hover:shadow-md cursor-pointer"
           >
             Done
           </button>
@@ -275,7 +239,7 @@ export default function SettingsDialog({
    Sub-components
    ──────────────────────────────────────────────── */
 
-function Section({
+function SectionCard({
   title,
   icon,
   children,
@@ -285,15 +249,12 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="rounded-xl border border-gray-100 bg-gradient-to-b from-white to-gray-50/30 p-4">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-gray-400">{icon}</span>
-        <h3 className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">
-          {title}
-        </h3>
-        <div className="flex-1 h-px bg-gray-100" />
+        <h3 className="text-[12px] font-semibold tracking-wide text-gray-500 uppercase">{title}</h3>
       </div>
-      <div className="space-y-4 pl-0.5">{children}</div>
+      <div className="space-y-3.5">{children}</div>
     </div>
   );
 }
@@ -307,7 +268,6 @@ function SettingRow({ label, children }: { label: string; children: React.ReactN
   );
 }
 
-/* ── Color Swatches ── */
 function ColorSwatches({
   colors,
   selected,
@@ -322,10 +282,8 @@ function ColorSwatches({
       {colors.map((c) => {
         const isSelected = selected === c.value;
         const isDark =
-          c.value.includes("0, 0, 0") ||
-          c.value === "#000000" ||
-          c.value.includes("37, 99") ||
-          c.value.includes("147, 51") ||
+          c.value.includes("0, 0, 0") || c.value === "#000000" ||
+          c.value.includes("37, 99") || c.value.includes("147, 51") ||
           c.value.includes("220, 38");
         return (
           <button
@@ -341,11 +299,8 @@ function ColorSwatches({
           >
             {isSelected && (
               <svg
-                className={`absolute inset-0 m-auto w-3.5 h-3.5 ${isDark ? "text-white" : "text-gray-800"}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={3}
+                className={`absolute inset-0 m-auto w-3 h-3 ${isDark ? "text-white" : "text-gray-800"}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
@@ -357,33 +312,13 @@ function ColorSwatches({
   );
 }
 
-/* ── Slider Row ── */
-function SliderRow({
-  min,
-  max,
-  step,
-  value,
-  onChange,
-  suffix,
-}: {
-  min: number;
-  max: number;
-  step: number;
-  value: number;
-  onChange: (v: number) => void;
-  suffix: string;
+function SliderRow({ min, max, step, value, onChange, suffix }: {
+  min: number; max: number; step: number; value: number; onChange: (v: number) => void; suffix: string;
 }) {
   return (
-    <div className="flex items-center gap-3 w-44">
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="flex-1"
-      />
+    <div className="flex items-center gap-3 w-48">
+      <input type="range" min={min} max={max} step={step} value={value}
+        onChange={(e) => onChange(Number(e.target.value))} className="flex-1" />
       <span className="text-[11px] text-gray-400 font-mono w-8 text-right tabular-nums">
         {value}{suffix}
       </span>
@@ -391,43 +326,37 @@ function SliderRow({
   );
 }
 
-/* ── Toggle ── */
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={`relative w-11 h-6 rounded-full transition-colors duration-200 ease-out cursor-pointer ${
-        checked ? "bg-green-500" : "bg-gray-300"
+      className={`relative w-11 h-6 rounded-full transition-all duration-200 ease-out cursor-pointer ${
+        checked
+          ? "bg-gradient-to-r from-green-400 to-green-500 shadow-inner shadow-green-600/20"
+          : "bg-gray-300"
       }`}
     >
       <div
         className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-out
           ${checked ? "translate-x-5" : "translate-x-0"}
-          shadow-[0_1px_3px_rgba(0,0,0,0.15),0_1px_2px_rgba(0,0,0,0.1)]`}
+          shadow-[0_1px_4px_rgba(0,0,0,0.15),0_1px_2px_rgba(0,0,0,0.08)]`}
       />
     </button>
   );
 }
 
-/* ── Segmented Control ── */
-function SegmentedControl({
-  options,
-  value,
-  onChange,
-}: {
-  options: { label: string; value: string }[];
-  value: string;
-  onChange: (v: string) => void;
+function SegmentedControl({ options, value, onChange }: {
+  options: { label: string; value: string }[]; value: string; onChange: (v: string) => void;
 }) {
   return (
-    <div className="inline-flex rounded-lg bg-gray-100 p-0.5 gap-0.5">
+    <div className="inline-flex rounded-lg bg-gray-100/80 p-[3px] gap-[2px]">
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition-all duration-150 cursor-pointer
+          className={`px-3 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-150 cursor-pointer
             ${value === opt.value
-              ? "bg-white text-gray-900 shadow-sm"
+              ? "bg-white text-gray-900 shadow-sm shadow-gray-200/60"
               : "text-gray-500 hover:text-gray-700"
             }`}
         >

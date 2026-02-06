@@ -15,6 +15,7 @@
     background: #fff;
     color: #1b1b1f;
     overflow: hidden;
+    font-family: "DM Sans", system-ui, sans-serif;
   }
 
   #root {
@@ -48,7 +49,7 @@
 
   .btn-icon {
     @apply inline-flex items-center justify-center rounded-xl
-           border border-gray-200 bg-white/80 p-2.5
+           border border-gray-200/80 bg-white/90 p-2.5
            text-gray-500 transition-all duration-200 ease-out
            hover:bg-white hover:text-gray-900 hover:border-gray-300 hover:shadow-sm
            active:scale-[0.96]
@@ -64,11 +65,30 @@
            active:translate-y-0 active:scale-[0.98];
   }
 
-  /* ── Glass Panel ── */
+  /* ── Glass Panel — premium frosted glass with gradient border ── */
   .glass-panel {
-    @apply rounded-2xl bg-white/85 backdrop-blur-2xl
-           border border-white/60
-           shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)];
+    position: relative;
+    @apply rounded-2xl backdrop-blur-2xl;
+    background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.85));
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 8px 40px rgba(0,0,0,0.08),
+      0 2px 8px rgba(0,0,0,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+
+  /* Subtle green gradient line at top */
+  .glass-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+    background: linear-gradient(90deg, transparent, #22c55e, #10b981, transparent);
+    opacity: 0.5;
   }
 
   /* ── Recording pulse ── */
@@ -77,24 +97,19 @@
   }
 
   @keyframes recordingPulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.4;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 
-  /* ── Subtle float for dialogs ── */
+  /* ── Dialog animations ── */
   .dialog-enter {
-    animation: dialogEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: dialogEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   @keyframes dialogEnter {
     0% {
       opacity: 0;
-      transform: scale(0.96) translateY(8px);
+      transform: scale(0.95) translateY(10px);
     }
     100% {
       opacity: 1;
@@ -103,16 +118,47 @@
   }
 
   .backdrop-enter {
-    animation: backdropEnter 0.2s ease-out;
+    animation: backdropEnter 0.25s ease-out;
   }
 
   @keyframes backdropEnter {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* ── Gradient text utility ── */
+  .text-gradient {
+    background: linear-gradient(135deg, #16a34a, #10b981, #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Success shimmer for export ── */
+  .success-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .success-shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* ── Active indicator dot (green glow) ── */
+  .active-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-green-500;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
   }
 }
 
@@ -128,22 +174,20 @@
 
 /* ── Respect reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* ── Custom range slider (green accent) ── */
+/* ── Custom range slider ── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: linear-gradient(90deg, #e5e7eb, #d1d5db);
   outline: none;
   cursor: pointer;
 }
@@ -153,28 +197,29 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #16a34a;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   border: 3px solid white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(22, 163, 74, 0.15);
   cursor: pointer;
-  transition: box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 input[type="range"]::-webkit-slider-thumb:hover {
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(22, 163, 74, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(22, 163, 74, 0.12);
+  transform: scale(1.1);
 }
 input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #16a34a;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   border: 3px solid white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
-/* ── Scrollbar styling for settings ── */
+/* ── Scrollbar ── */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;

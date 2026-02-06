@@ -241,9 +241,15 @@ export default function BoardPage() {
         <Suspense
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-white">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
-                <p className="text-gray-400 text-sm">Loading Excalidraw...</p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-10 h-10">
+                  <div className="absolute inset-0 rounded-full border-2 border-green-100" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-green-500 animate-spin" />
+                </div>
+                <div className="text-center">
+                  <p className="text-gray-700 text-sm font-medium">Loading Excalidraw</p>
+                  <p className="text-gray-400 text-xs mt-0.5">Preparing your canvas...</p>
+                </div>
               </div>
             </div>
           }
@@ -255,16 +261,20 @@ export default function BoardPage() {
       {/* Selection area indicator (when confirmed but not selecting) */}
       {confirmedSelection && !isSelectingArea && !recorder.isRecording && (
         <div
-          className="absolute pointer-events-none z-30 border-2 border-accent/50 rounded-[4px]"
+          className="absolute pointer-events-none z-30 rounded-[6px]"
           style={{
             left: confirmedSelection.x,
             top: confirmedSelection.y,
             width: confirmedSelection.width,
             height: confirmedSelection.height,
-            boxShadow: "0 0 0 9999px rgba(0,0,0,0.03)",
+            border: "2px solid rgba(34, 197, 94, 0.4)",
+            boxShadow: "0 0 0 1px rgba(34, 197, 94, 0.1), 0 0 0 9999px rgba(0,0,0,0.02)",
           }}
         >
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-accent/90 text-white text-[10px] font-mono whitespace-nowrap">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-green-600/90 backdrop-blur-sm text-white text-[10px] font-semibold whitespace-nowrap shadow-lg shadow-green-600/20">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5" />
+            </svg>
             Recording Area
           </div>
         </div>
@@ -273,15 +283,17 @@ export default function BoardPage() {
       {/* Recording indicator border */}
       {recorder.isRecording && confirmedSelection && (
         <div
-          className="absolute pointer-events-none z-30 border-2 border-red-500 rounded-[4px] recording-pulse"
+          className="absolute pointer-events-none z-30 rounded-[6px] recording-pulse"
           style={{
             left: confirmedSelection.x,
             top: confirmedSelection.y,
             width: confirmedSelection.width,
             height: confirmedSelection.height,
+            border: "2px solid rgba(239, 68, 68, 0.7)",
+            boxShadow: "0 0 0 1px rgba(239, 68, 68, 0.15), inset 0 0 0 1px rgba(239, 68, 68, 0.05)",
           }}
         >
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-mono whitespace-nowrap">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-600/90 backdrop-blur-sm text-white text-[10px] font-semibold whitespace-nowrap shadow-lg shadow-red-600/20">
             <div className="w-1.5 h-1.5 rounded-full bg-white recording-pulse" />
             REC
           </div>

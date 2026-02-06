@@ -46,7 +46,6 @@ export default function CaptionOverlay({
       if (rect) {
         dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       }
-
       const handleMouseMove = (ev: MouseEvent) => {
         if (!isDragging.current) return;
         const boxWidth = containerRef.current?.offsetWidth || 480;
@@ -56,13 +55,11 @@ export default function CaptionOverlay({
         setPosition({ x: newX, y: newY });
         onPositionChange?.({ x: newX, y: newY });
       };
-
       const handleMouseUp = () => {
         isDragging.current = false;
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseup", handleMouseUp);
       };
-
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
     },
@@ -80,11 +77,12 @@ export default function CaptionOverlay({
     >
       <div className="relative group max-w-[480px] min-w-[200px]">
         <div
-          className="px-4 py-3 shadow-lg backdrop-blur-sm"
+          className="px-5 py-3 backdrop-blur-md"
           style={{
             background: bgColor,
             borderRadius: `${cornerRadius}px`,
-            border: "1px solid rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
           <p
@@ -98,8 +96,12 @@ export default function CaptionOverlay({
             )}
           </p>
         </div>
-        <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-black/60 border border-white/20 text-[9px] text-white/60 font-mono shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-          CAPTIONS — drag to move
+        {/* Drag hint */}
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gray-900/80 backdrop-blur-sm border border-white/10 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:-translate-y-0.5">
+          <svg className="w-2.5 h-2.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12" />
+          </svg>
+          <span className="text-[9px] text-white/60 font-medium tracking-wide">Drag to move</span>
         </div>
       </div>
     </div>
