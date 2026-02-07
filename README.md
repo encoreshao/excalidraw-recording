@@ -2,6 +2,8 @@
 
 A web application that integrates [Excalidraw](https://excalidraw.com/) with screen recording capabilities. Draw on a whiteboard while recording your voice, camera, and live captions — then export the result as a video file, all processed locally in the browser.
 
+![Excalidraw Recording](https://raw.githubusercontent.com/encoreshao/excalidraw-recording/main/assets/images/recording.png)
+
 ## Features
 
 - **Full Excalidraw whiteboard** — All drawing tools, shapes, text, and collaboration features from Excalidraw, available without login
