@@ -146,6 +146,7 @@ Open [http://localhost:8080](http://localhost:8080)
 - **Chrome / Edge** — Full support (MediaRecorder, SpeechRecognition, all features)
 - **Firefox** — Recording works; speech-to-text is not available
 - **Safari** — Limited MediaRecorder support; speech-to-text not available
+- **Arc** — Limited MediaRecorder support; speech-to-text not available
 
 ## License
 
