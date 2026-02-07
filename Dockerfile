@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies first (better layer caching)
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm ci --maxsockets 5 || npm ci --maxsockets 3 || npm ci --maxsockets 1
 
 # Copy source and build
 COPY . .
