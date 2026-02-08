@@ -155,4 +155,5 @@ This project is open source under the [MIT License](LICENSE).
 ## Links
 
 - [GitHub](https://github.com/encoreshao)
+- [LinkedIn](https://www.linkedin.com/in/encoreshao)
 - [X / Twitter](https://x.com/encoreshao)

@@ -145,14 +145,52 @@ export default function RecordingControls({
     }
   }, [position]);
 
+  // Track previous window size for proportional repositioning
+  const prevWindowSize = useRef({ w: window.innerWidth, h: window.innerHeight });
+
+  // Reposition proportionally on window resize (both shrink and grow)
   useEffect(() => {
+    const handleResize = () => {
+      if (!containerRef.current || !position) return;
+      const barW = containerRef.current.offsetWidth;
+      const barH = containerRef.current.offsetHeight;
+      const prevW = prevWindowSize.current.w;
+      const prevH = prevWindowSize.current.h;
+      const newW = window.innerWidth;
+      const newH = window.innerHeight;
+
+      // Scale position proportionally based on window size change
+      const scaledX = prevW > 0 ? (position.x / prevW) * newW : position.x;
+      const scaledY = prevH > 0 ? (position.y / prevH) * newH : position.y;
+
+      // Clamp to stay within viewport
+      const clampedX = Math.max(0, Math.min(scaledX, newW - barW));
+      const clampedY = Math.max(0, Math.min(scaledY, newH - barH));
+
+      prevWindowSize.current = { w: newW, h: newH };
+
+      if (clampedX !== position.x || clampedY !== position.y) {
+        const newPos = { x: clampedX, y: clampedY };
+        setPosition(newPos);
+        try { localStorage.setItem(POSITION_KEY, JSON.stringify(newPos)); } catch { /* ignore */ }
+      }
+    };
+
+    // Also clamp when recording mode toggles (bar width changes)
     if (containerRef.current && position) {
-      const w = containerRef.current.offsetWidth;
-      const maxX = window.innerWidth - w;
-      if (position.x > maxX) {
-        setPosition((p) => p ? { ...p, x: Math.max(0, maxX) } : p);
+      const barW = containerRef.current.offsetWidth;
+      const barH = containerRef.current.offsetHeight;
+      const maxX = window.innerWidth - barW;
+      const maxY = window.innerHeight - barH;
+      const clampedX = Math.max(0, Math.min(position.x, maxX));
+      const clampedY = Math.max(0, Math.min(position.y, maxY));
+      if (clampedX !== position.x || clampedY !== position.y) {
+        setPosition({ x: clampedX, y: clampedY });
       }
     }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isRecording, position]);
 
   const handleDragStart = useCallback((e: React.MouseEvent) => {
