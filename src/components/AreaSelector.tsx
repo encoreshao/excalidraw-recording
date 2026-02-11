@@ -9,6 +9,7 @@ interface AspectPreset {
 }
 
 const ASPECT_PRESETS: AspectPreset[] = [
+  { label: "Full", sublabel: "Window", ratio: null, icon: "fw" },
   { label: "16:9", sublabel: "YouTube", ratio: [16, 9], icon: "yt" },
   { label: "4:3", sublabel: "Classic", ratio: [4, 3], icon: "tv" },
   { label: "3:4", sublabel: "RedNote", ratio: [3, 4], icon: "rn" },
@@ -46,6 +47,29 @@ export default function AreaSelector({
     if (active) setShowPresets(true);
   }, [active]);
 
+  // Keyboard shortcut: F = full window, Escape = cancel, Enter = confirm
+  useEffect(() => {
+    if (!active) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onCancel();
+      } else if (e.key === "Enter" && selectionArea && selectionArea.width > 10 && selectionArea.height > 10) {
+        e.preventDefault();
+        onConfirm();
+      } else if ((e.key === "f" || e.key === "F") && !selectionArea) {
+        e.preventDefault();
+        const container = containerRef.current;
+        if (container) {
+          onSelectionChange({ x: 0, y: 0, width: container.offsetWidth, height: container.offsetHeight });
+          setShowPresets(false);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [active, selectionArea, onCancel, onConfirm, onSelectionChange, containerRef]);
+
   const applyPreset = useCallback(
     (ratio: [number, number]) => {
       const container = containerRef.current;
@@ -70,14 +94,22 @@ export default function AreaSelector({
     [containerRef, onSelectionChange],
   );
 
+  const applyFullWindow = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    onSelectionChange({ x: 0, y: 0, width: container.offsetWidth, height: container.offsetHeight });
+    setShowPresets(false);
+  }, [containerRef, onSelectionChange]);
+
   const handlePresetClick = useCallback(
     (preset: AspectPreset, e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (preset.ratio) applyPreset(preset.ratio);
+      if (preset.icon === "fw") applyFullWindow();
+      else if (preset.ratio) applyPreset(preset.ratio);
       else setShowPresets(false);
     },
-    [applyPreset],
+    [applyPreset, applyFullWindow],
   );
 
   const getRelativePosition = useCallback(
@@ -228,8 +260,11 @@ export default function AreaSelector({
             }}
           >
             <div className="absolute inset-0 cursor-move" onMouseDown={handleMoveStart} />
-            {/* Dimensions badge */}
-            <div className="absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gray-900/85 backdrop-blur-sm text-white text-[11px] font-mono whitespace-nowrap shadow-lg">
+            {/* Dimensions badge — inside top if no room above */}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gray-900/85 backdrop-blur-sm text-white text-[11px] font-mono whitespace-nowrap shadow-lg"
+              style={selectionArea.y >= 36 ? { top: -36 } : { top: 8 }}
+            >
               <svg className="w-3 h-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5" />
               </svg>
@@ -256,39 +291,49 @@ export default function AreaSelector({
             );
           })}
 
-          {/* Action buttons */}
-          {!isDragging && (
-            <div
-              className="absolute z-20 flex gap-2"
-              style={{
-                top: selectionArea.y + selectionArea.height + 16,
-                left: selectionArea.x + selectionArea.width / 2,
-                transform: "translateX(-50%)",
-              }}
-            >
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onConfirm(); }}
-                className="flex items-center gap-1.5 rounded-xl
-                           bg-gradient-to-b from-green-500 to-green-600
-                           px-5 py-2 text-[13px] font-semibold text-white
-                           shadow-lg shadow-green-600/30
-                           hover:from-green-400 hover:to-green-500 hover:shadow-xl
-                           active:scale-[0.97] transition-all duration-150 cursor-pointer"
+          {/* Action buttons — inside selection if no room below */}
+          {!isDragging && (() => {
+            const btnHeight = 44;
+            const spaceBelow = window.innerHeight - (selectionArea.y + selectionArea.height);
+            const placeInside = spaceBelow < btnHeight + 24;
+
+            return (
+              <div
+                className="absolute z-20 flex gap-2"
+                style={{
+                  top: placeInside
+                    ? selectionArea.y + selectionArea.height - btnHeight - 16
+                    : selectionArea.y + selectionArea.height + 16,
+                  left: selectionArea.x + selectionArea.width / 2,
+                  transform: "translateX(-50%)",
+                }}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                Confirm
-              </button>
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancel(); }}
-                className="flex items-center gap-1.5 rounded-xl border border-white/40 bg-white/90 backdrop-blur-sm px-4 py-2 text-[13px] font-medium text-gray-700
-                           shadow-lg hover:bg-white hover:text-gray-900 active:scale-[0.97] transition-all duration-150 cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onConfirm(); }}
+                  className="flex items-center gap-1.5 rounded-xl
+                             bg-gradient-to-b from-green-500 to-green-600
+                             px-5 py-2 text-[13px] font-semibold text-white
+                             shadow-lg shadow-green-600/30
+                             hover:from-green-400 hover:to-green-500 hover:shadow-xl
+                             active:scale-[0.97] transition-all duration-150 cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                  Confirm
+                  <kbd className="ml-1 px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-mono">⏎</kbd>
+                </button>
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancel(); }}
+                  className="flex items-center gap-1.5 rounded-xl border border-white/40 bg-white/90 backdrop-blur-sm px-4 py-2 text-[13px] font-medium text-gray-700
+                             shadow-lg hover:bg-white hover:text-gray-900 active:scale-[0.97] transition-all duration-150 cursor-pointer"
+                >
+                  Cancel
+                  <kbd className="ml-1 px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-mono text-gray-400">Esc</kbd>
+                </button>
+              </div>
+            );
+          })()}
         </>
       )}
 
@@ -321,7 +366,13 @@ export default function AreaSelector({
                              hover:shadow-md hover:shadow-green-100/50 hover:-translate-y-0.5
                              active:scale-[0.97] active:translate-y-0"
                 >
-                  {preset.ratio ? (
+                  {preset.icon === "fw" ? (
+                    <div className="w-8 h-8 rounded-lg border-2 border-green-200 bg-green-50 group-hover:border-green-400 group-hover:bg-green-100 transition-colors flex items-center justify-center">
+                      <svg className="w-4 h-4 text-green-500 group-hover:text-green-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                      </svg>
+                    </div>
+                  ) : preset.ratio ? (
                     <RatioPreview ratio={preset.ratio} />
                   ) : (
                     <div className="w-8 h-8 rounded-lg border-2 border-dashed border-gray-200 group-hover:border-green-300 transition-colors flex items-center justify-center">
@@ -344,7 +395,7 @@ export default function AreaSelector({
 
             <div className="mt-4 flex items-center justify-between">
               <p className="text-[11px] text-gray-400">
-                Pick a ratio or draw freely
+                Pick a ratio, press <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-mono text-[10px]">F</kbd> for full window, or draw freely
               </p>
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancel(); }}

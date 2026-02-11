@@ -26,6 +26,7 @@ const ExcalidrawWithMenu = lazy(async () => {
     <Excalidraw
       theme="light"
       renderTopRightUI={props.renderTopRightUI}
+      validateEmbeddable={true}
       UIOptions={{
         canvasActions: {
           export: { saveFileToDisk: true },

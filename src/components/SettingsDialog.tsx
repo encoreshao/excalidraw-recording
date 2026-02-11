@@ -278,7 +278,7 @@ function ColorSwatches({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-1.5">
+    <div className="flex gap-2.5">
       {colors.map((c) => {
         const isSelected = selected === c.value;
         const isDark =
