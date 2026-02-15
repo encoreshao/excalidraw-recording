@@ -7,6 +7,7 @@ A web application that integrates [Excalidraw](https://excalidraw.com/) with scr
 ## Features
 
 - **Full Excalidraw whiteboard** — All drawing tools, shapes, text, and collaboration features from Excalidraw, available without login
+- **Slide presentation mode** — Turn Excalidraw frames into a fullscreen slide deck. Navigate with arrow keys, swipe, or click screen edges. The Present button shows a live frame count badge so you always know how many slides are ready
 - **Area selection with aspect ratio presets** — Select a recording area with one click using presets for YouTube (16:9), TikTok (9:16), RedNote (3:4), Square (1:1), Classic (4:3), or draw a custom region
 - **Camera overlay** — Draggable circular camera bubble composited into the recording
 - **Microphone capture** — Record audio alongside your drawing session
@@ -14,6 +15,7 @@ A web application that integrates [Excalidraw](https://excalidraw.com/) with scr
 - **Mouse cursor effects** — Highlight or spotlight effect follows your cursor in the recorded output
 - **Local video export** — All recording and encoding happens in the browser using MediaRecorder. No server upload required. Supports MP4 (where available) and WebM
 - **Configurable settings** — Caption styling, camera bubble size, canvas padding, cursor effects, recording FPS, video bitrate — all persisted to localStorage
+- **Built-in help guide** — Side panel with quick-start instructions, keyboard shortcuts, and tips for all features
 - **Optional Google authentication** — Sign in with Google to display your avatar; the app is fully functional without login and without any Google configuration
 - **Draggable action bar** — The recording toolbar can be repositioned anywhere on screen; position is persisted across sessions
 
@@ -43,6 +45,8 @@ src/
 │   ├── CameraPreview.tsx            # Draggable circular camera feed bubble
 │   ├── CaptionOverlay.tsx           # Draggable live speech-to-text caption box
 │   ├── RecordingControls.tsx        # Draggable bottom toolbar with tooltips
+│   ├── PresentationMode.tsx         # Fullscreen slide presentation using Excalidraw frames
+│   ├── HelpPanel.tsx                # Side panel with usage guide and keyboard shortcuts
 │   ├── SettingsDialog.tsx           # Settings popup (captions, camera, recording, cursor)
 │   └── ExportDialog.tsx             # Post-recording video preview & download
 ├── contexts/
@@ -127,11 +131,25 @@ Open [http://localhost:8080](http://localhost:8080)
 
 ## Usage
 
+### Recording a Video
+
 1. **Draw** — Use the Excalidraw toolbar to sketch diagrams, write text, and create drawings
 2. **Set up recording** — Toggle camera, microphone, and captions using the bottom toolbar
 3. **Select area** — Click the area icon and pick an aspect ratio preset (or draw a custom region)
 4. **Record** — Click "Record" to start. The toolbar collapses to show only timer, pause, and stop
 5. **Export** — After stopping, preview the video and download it as MP4/WebM, support custom file name
+
+### Presenting Slides
+
+Presentation mode turns Excalidraw **frames** into a fullscreen slide deck — no external tool needed.
+
+1. **Create frames** — Press `F` on your keyboard (or select Frame from the shape dropdown in the toolbar). Draw a frame around each piece of content you want as a slide. Name frames to add slide titles.
+2. **Check readiness** — The **Present** button in the toolbar shows a badge with the number of frames detected (e.g. "Present 3"). If you see no number, you haven't created any frames yet.
+3. **Start presenting** — Click the **Present** button. The canvas enters fullscreen and zooms to the first frame.
+4. **Navigate** — Use `←` / `→` arrow keys, swipe left/right on touch devices, or click the left/right edges of the screen. Progress dots at the bottom show your position.
+5. **Exit** — Press `Escape` or click the **ESC** button in the bottom-right corner.
+
+> Frames are sorted in reading order (top-to-bottom, then left-to-right), so arrange them on the canvas in the order you want to present.
 
 ## Key Design Decisions
 
