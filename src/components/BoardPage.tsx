@@ -10,6 +10,8 @@ import CaptionOverlay from "./CaptionOverlay";
 import RecordingControls from "./RecordingControls";
 import SettingsDialog from "./SettingsDialog";
 import ExportDialog from "./ExportDialog";
+import PresentationMode from "./PresentationMode";
+import HelpPanel from "./HelpPanel";
 import type { SelectionArea } from "../types";
 
 // Import Excalidraw's own stylesheet
@@ -22,10 +24,12 @@ const ExcalidrawWithMenu = lazy(async () => {
   // eslint-disable-next-line react/display-name
   const Component = (props: {
     renderTopRightUI: () => React.JSX.Element;
+    onAPIReady?: (api: any) => void;
   }) => (
     <Excalidraw
       theme="light"
       renderTopRightUI={props.renderTopRightUI}
+      excalidrawAPI={props.onAPIReady}
       validateEmbeddable={true}
       UIOptions={{
         canvasActions: {
@@ -87,6 +91,11 @@ export default function BoardPage() {
   const excalidrawContainerRef = useRef<HTMLDivElement>(null);
   const { settings, updateSetting, resetSettings } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  // Excalidraw API & Presentation mode
+  const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
+  const [presentationMode, setPresentationMode] = useState(false);
 
   // Area selection state
   const [isSelectingArea, setIsSelectingArea] = useState(false);
@@ -265,7 +274,7 @@ export default function BoardPage() {
             </div>
           }
         >
-          <ExcalidrawWithMenu renderTopRightUI={renderTopRightUI} />
+          <ExcalidrawWithMenu renderTopRightUI={renderTopRightUI} onAPIReady={setExcalidrawAPI} />
         </Suspense>
       </div>
 
@@ -339,7 +348,7 @@ export default function BoardPage() {
       />
 
       {/* Recording controls */}
-      {!isSelectingArea && (
+      {!isSelectingArea && !presentationMode && (
         <RecordingControls
           isRecording={recorder.isRecording}
           isPaused={recorder.isPaused}
@@ -361,6 +370,8 @@ export default function BoardPage() {
           onPauseRecording={recorder.pauseRecording}
           onResumeRecording={recorder.resumeRecording}
           onOpenSettings={() => setSettingsOpen(true)}
+          onStartPresentation={() => setPresentationMode(true)}
+          onOpenHelp={() => setHelpOpen(true)}
         />
       )}
 
@@ -373,6 +384,12 @@ export default function BoardPage() {
         onReset={resetSettings}
       />
 
+      {/* Help panel */}
+      <HelpPanel
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+      />
+
       {/* Export dialog */}
       {recorder.recordedBlob && (
         <ExportDialog
@@ -381,6 +398,14 @@ export default function BoardPage() {
           duration={recorder.duration}
           onClose={() => recorder.clearRecording()}
           onNewRecording={handleNewRecording}
+        />
+      )}
+
+      {/* Presentation mode */}
+      {presentationMode && excalidrawAPI && (
+        <PresentationMode
+          excalidrawAPI={excalidrawAPI}
+          onExit={() => setPresentationMode(false)}
         />
       )}
     </div>

@@ -172,6 +172,70 @@
   height: 100%;
 }
 
+/* ── Presentation mode — hide Excalidraw UI ── */
+.presentation-active .excalidraw .layer-ui__wrapper {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+/* Keep the canvas itself visible */
+.presentation-active .excalidraw .excalidraw__canvas,
+.presentation-active .excalidraw canvas {
+  visibility: visible !important;
+}
+
+/* Presentation overlay base */
+.presentation-overlay {
+  background: transparent;
+}
+
+/* Navigation zones */
+.presentation-nav-zone {
+  background: transparent;
+  border: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Progress dots scrollbar */
+.presentation-dots::-webkit-scrollbar {
+  height: 3px;
+}
+.presentation-dots::-webkit-scrollbar-track {
+  background: transparent;
+}
+.presentation-dots::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+/* Keyboard hints fade-out */
+.presentation-hints {
+  animation: hintsAppear 2.5s ease-out forwards;
+}
+
+@keyframes hintsAppear {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+  8% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ── Help panel slide-in ── */
+.help-panel-enter {
+  animation: helpPanelSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes helpPanelSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ── Respect reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
