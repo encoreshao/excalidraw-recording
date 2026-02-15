@@ -25,12 +25,17 @@ const ExcalidrawWithMenu = lazy(async () => {
   const Component = (props: {
     renderTopRightUI: () => React.JSX.Element;
     onAPIReady?: (api: any) => void;
+    onFrameCountChange?: (count: number) => void;
   }) => (
     <Excalidraw
       theme="light"
       renderTopRightUI={props.renderTopRightUI}
       excalidrawAPI={props.onAPIReady}
       validateEmbeddable={true}
+      onChange={(elements) => {
+        const count = elements.filter((el) => el.type === "frame" && !el.isDeleted).length;
+        props.onFrameCountChange?.(count);
+      }}
       UIOptions={{
         canvasActions: {
           export: { saveFileToDisk: true },
@@ -96,6 +101,14 @@ export default function BoardPage() {
   // Excalidraw API & Presentation mode
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
   const [presentationMode, setPresentationMode] = useState(false);
+  const [frameCount, setFrameCount] = useState(0);
+  const frameCountRef = useRef(0);
+  const handleFrameCountChange = useCallback((count: number) => {
+    if (count !== frameCountRef.current) {
+      frameCountRef.current = count;
+      setFrameCount(count);
+    }
+  }, []);
 
   // Area selection state
   const [isSelectingArea, setIsSelectingArea] = useState(false);
@@ -274,7 +287,7 @@ export default function BoardPage() {
             </div>
           }
         >
-          <ExcalidrawWithMenu renderTopRightUI={renderTopRightUI} onAPIReady={setExcalidrawAPI} />
+          <ExcalidrawWithMenu renderTopRightUI={renderTopRightUI} onAPIReady={setExcalidrawAPI} onFrameCountChange={handleFrameCountChange} />
         </Suspense>
       </div>
 
@@ -372,6 +385,7 @@ export default function BoardPage() {
           onOpenSettings={() => setSettingsOpen(true)}
           onStartPresentation={() => setPresentationMode(true)}
           onOpenHelp={() => setHelpOpen(true)}
+          frameCount={frameCount}
         />
       )}
 

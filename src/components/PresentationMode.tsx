@@ -186,45 +186,107 @@ export default function PresentationMode({ excalidrawAPI, onExit }: Presentation
   );
 
   // ═══════════════════════════════════════════
-  // RENDER — No frames
+  // RENDER — No frames (interactive guide)
   // ═══════════════════════════════════════════
   if (frames.length === 0) {
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-        <div className="text-center text-white max-w-md px-6 dialog-enter">
-          {/* Icon */}
-          <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-white/10 flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-white/80"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z"
-              />
-            </svg>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-sm">
+        <div className="text-white max-w-lg w-full mx-4 dialog-enter">
+          {/* Card */}
+          <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/10 overflow-hidden">
+            {/* Header */}
+            <div className="px-6 pt-6 pb-4 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold mb-1">Create Slides to Present</h2>
+              <p className="text-white/50 text-sm">Each <strong className="text-white/70">frame</strong> on your canvas = one slide</p>
+            </div>
+
+            {/* Steps */}
+            <div className="px-6 pb-5 space-y-3">
+              {/* Step 1 */}
+              <div className="flex gap-3 items-start p-3 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-amber-400 text-xs font-bold">1</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white/90 text-sm font-medium">Open the Frame tool</p>
+                  <p className="text-white/40 text-xs mt-0.5">
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/60 font-mono text-[10px] mx-0.5">F</kbd> on your keyboard, or find it in the toolbar (rectangle dropdown)
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex gap-3 items-start p-3 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-amber-400 text-xs font-bold">2</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white/90 text-sm font-medium">Draw frames around your content</p>
+                  <p className="text-white/40 text-xs mt-0.5">
+                    Click and drag to create a frame. Each frame = one slide. Name them to add slide titles.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex gap-3 items-start p-3 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-amber-400 text-xs font-bold">3</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white/90 text-sm font-medium">Click "Present" again</p>
+                  <p className="text-white/40 text-xs mt-0.5">
+                    Navigate with <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/60 font-mono text-[10px] mx-0.5">&larr;</kbd> <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/60 font-mono text-[10px] mx-0.5">&rarr;</kbd> arrows, swipe, or click the edges of the screen
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Visual preview: mini canvas illustration */}
+            <div className="mx-6 mb-5 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+              <div className="flex items-center gap-3 justify-center">
+                {/* Mini frame illustrations */}
+                {["Slide 1", "Slide 2", "Slide 3"].map((label, i) => (
+                  <div
+                    key={label}
+                    className="relative w-20 h-14 rounded-lg border-2 border-dashed flex items-center justify-center transition-all"
+                    style={{
+                      borderColor: i === 0 ? "rgba(251, 191, 36, 0.5)" : "rgba(255,255,255,0.15)",
+                      backgroundColor: i === 0 ? "rgba(251, 191, 36, 0.08)" : "rgba(255,255,255,0.02)",
+                    }}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-8 h-1 rounded-full" style={{ backgroundColor: i === 0 ? "rgba(251, 191, 36, 0.4)" : "rgba(255,255,255,0.1)" }} />
+                      <div className="w-6 h-1 rounded-full" style={{ backgroundColor: i === 0 ? "rgba(251, 191, 36, 0.25)" : "rgba(255,255,255,0.06)" }} />
+                    </div>
+                    <span className="absolute -bottom-4 text-[9px] text-white/30 whitespace-nowrap">{label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-white/30 text-[10px] text-center mt-5">Frames are read left-to-right, top-to-bottom</p>
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 pb-5 flex gap-3">
+              <button
+                onClick={onExit}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold transition-all shadow-lg shadow-amber-500/20 cursor-pointer active:scale-[0.98]"
+              >
+                Got it — Create Frames
+              </button>
+              <button
+                onClick={onExit}
+                className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/70 hover:text-white text-sm font-medium transition-all border border-white/10 cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
-
-          <h2 className="text-xl font-semibold mb-2">No Slides Found</h2>
-          <p className="text-white/60 text-sm leading-relaxed mb-6">
-            Add <strong className="text-white/80">frames</strong> to your
-            Excalidraw canvas to use as slides. Each frame becomes one slide in
-            presentation mode.
-          </p>
-          <p className="text-white/40 text-xs mb-8">
-            Tip: Use the Frame tool (shortcut <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/60 font-mono text-[11px]">F</kbd>) to create frames
-          </p>
-
-          <button
-            onClick={onExit}
-            className="px-6 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-sm font-medium transition-all backdrop-blur-sm border border-white/10"
-          >
-            Back to Canvas
-          </button>
         </div>
       </div>
     );
